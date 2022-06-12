@@ -1,7 +1,7 @@
 name: scrollable_table_view
 description: A new Flutter package project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/herbertamukhuma/scrollable_table_view
 
 environment:
   sdk: ">=2.17.1 <3.0.0"
