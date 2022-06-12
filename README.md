@@ -11,29 +11,52 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+This is a multi axis scrollable table, that allows you to scroll on both the vertical and horizontal axis, with the header being static. Please look at the demo below.
 
 ## Features
+### Demo
+![](assets/gifs/scrollable-table-view.gif)
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+This widget serves the same purpose as a DataTable, with the advantage that it can scroll in both the horizontal and vertical axis, while maintaining the vertical position of the header.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Simply add into your dependencies the following line.
+
+```dart
+dependencies:
+  scrollable_table_view: ^0.0.1
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
 ```dart
-const like = 'sample';
+ScrollableTableView(
+  columns: [
+    "product_id",
+    "product_name",
+    "price",
+  ].map((column) {
+    return TableViewColumn(
+      label: column,
+    );
+  }).toList(),
+  rows: [
+    ["PR1000", "Milk", "20.00"],
+    ["PR1001", "Soap", "10.00"],
+  ].map((record) {
+    return TableViewRow(
+      height: 60,
+      cells: record.map((value) {
+        return TableViewCell(
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }).toList(),
+);
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+GitHub Repo: https://github.com/herbertamukhuma/scrollable_table_view

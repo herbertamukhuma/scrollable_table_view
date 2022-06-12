@@ -1,3 +1,3 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* A multi axis scrollable table, that allows you to scroll on both the vertical and horizontal axis
