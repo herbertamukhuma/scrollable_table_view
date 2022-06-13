@@ -11,7 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-This is a multi axis scrollable table, that allows you to scroll on both the vertical and horizontal axis, with the header being static. Please look at the demo below.
+This is a multi axis scrollable data table, that allows you to scroll on both the vertical and horizontal axis, with the header remaining static on the vertical axis. Please look at the demo below.
 
 ## Features
 ### Demo
