@@ -15,7 +15,7 @@ This is a multi axis scrollable table, that allows you to scroll on both the ver
 
 ## Features
 ### Demo
-![](assets/gifs/scrollable-table-view.gif)
+![](https://github.com/herbertamukhuma/scrollable_table_view/blob/fd47a2acb0ce7d11c848035394650e7e465210df/assets/gifs/scrollable-table-view.gif)
 
 This widget serves the same purpose as a DataTable, with the advantage that it can scroll in both the horizontal and vertical axis, while maintaining the vertical position of the header.
 
