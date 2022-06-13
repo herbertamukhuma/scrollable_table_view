@@ -51,13 +51,15 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
 
   void _updateVerticalPosition1() {
     setState(() {
-      _verticalScrollController1.jumpTo(_verticalScrollController2.position.pixels);
+      _verticalScrollController1
+          .jumpTo(_verticalScrollController2.position.pixels);
     });
   }
 
   void _updateVerticalPosition2() {
     setState(() {
-      _verticalScrollController2.jumpTo(_verticalScrollController1.position.pixels);
+      _verticalScrollController2
+          .jumpTo(_verticalScrollController1.position.pixels);
     });
   }
 
@@ -94,7 +96,8 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                   controller: _horizontalScrollController,
                   thumbVisibility: true,
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(vertical: _horizontalScrollViewPadding),
+                    padding: EdgeInsets.symmetric(
+                        vertical: _horizontalScrollViewPadding),
                     controller: _horizontalScrollController,
                     scrollDirection: Axis.horizontal,
                     child: Column(
@@ -116,7 +119,8 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                         ),
                         Expanded(
                           child: ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                            behavior: ScrollConfiguration.of(context)
+                                .copyWith(scrollbars: false),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.vertical,
                               controller: _verticalScrollController1,
@@ -144,7 +148,9 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                 /// The padding is hence achieved by adding the table header height, the vertical padding
                 /// of the horizontal [SingleChildScrollView] and the row divider height within the header.
                 padding: EdgeInsets.only(
-                  top: widget.headerHeight + (_horizontalScrollViewPadding * 2) + widget.rowDividerHeight,
+                  top: widget.headerHeight +
+                      (_horizontalScrollViewPadding * 2) +
+                      widget.rowDividerHeight,
                 ),
                 child: Align(
                   alignment: Alignment.topCenter,
@@ -203,7 +209,8 @@ class TableViewColumn extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: labelFontSize, fontWeight: FontWeight.bold),
+            style:
+                TextStyle(fontSize: labelFontSize, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -223,7 +230,8 @@ class TableViewRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var tableView = context.findAncestorWidgetOfExactType<ScrollableTableView>();
+    var tableView =
+        context.findAncestorWidgetOfExactType<ScrollableTableView>();
     assert(tableView != null);
     var columns = tableView!.columns;
 

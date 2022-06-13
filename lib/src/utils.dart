@@ -1,5 +1,6 @@
 class Utils {
-  static List<T> map<T>(List<dynamic> collection, T Function(int index, dynamic element) callback) {
+  static List<T> map<T>(List<dynamic> collection,
+      T Function(int index, dynamic element) callback) {
     int index = 0;
     List<T> returnList = [];
 
