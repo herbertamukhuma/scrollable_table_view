@@ -25,7 +25,7 @@ Simply add into your dependencies the following line.
 
 ```dart
 dependencies:
-  scrollable_table_view: ^0.0.1
+  scrollable_table_view: ^0.0.2
 ```
 
 ## Usage
