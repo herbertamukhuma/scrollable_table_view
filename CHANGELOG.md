@@ -10,3 +10,7 @@
 
 * Updated comments
 * onTap event on the rows
+
+## 0.0.4
+
+* Common issues section
