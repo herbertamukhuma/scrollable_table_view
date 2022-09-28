@@ -1,6 +1,6 @@
 name: scrollable_table_view
 description: This is a multi axis scrollable data table, that allows you to scroll on both the vertical and horizontal axis, with the header remaining static on the vertical axis.
-version: 0.0.4
+version: 1.0.0-beta
 homepage: https://github.com/herbertamukhuma/scrollable_table_view
 
 environment:
