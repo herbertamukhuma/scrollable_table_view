@@ -18,3 +18,7 @@
 ## 1.0.0-beta
 
 * Implemented pagination
+
+## 1.0.0
+
+* Implemented pagination
