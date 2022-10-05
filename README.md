@@ -56,6 +56,42 @@ ScrollableTableView(
   }).toList(),
 );
 ```
+### Pagination
+Pagination is supported from version 1.0.0-beta. First, initialize a `PaginationController` as follows:
+
+```dart
+final PaginationController paginationController = PaginationController(
+    rowCount: many_products.length,
+    rowsPerPage: 10,
+  );
+```
+
+Next, initialize your table and pass the pagination controller to the `paginationController` parameter:
+
+```dart
+ScrollableTableView(
+  paginationController: paginationController,
+  columns: columns.map((column) {
+    return TableViewColumn(
+      label: column,
+    );
+  }).toList(),
+  rows: many_products.map((product) {
+    return TableViewRow(
+      height: 60,
+      cells: columns.map((column) {
+        return TableViewCell(
+          child: Text(product[column] ?? ""),
+        );
+      }).toList(),
+    );
+  }).toList(),
+)
+```
+
+With the above setup, navigate forward and backwards using `paginationController.next()` and `paginationController.backwards()` respectively. To jump to a page directly, use `paginationController.jumpTo(pageToJumpTo)`.
+
+For the full example, go to the main.dart file in the example project.
 
 ## Additional information
 

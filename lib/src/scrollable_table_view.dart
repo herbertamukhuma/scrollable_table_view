@@ -10,6 +10,7 @@ class ScrollableTableView extends StatefulWidget {
     required this.columns,
     this.headerHeight = 40,
     this.rowDividerHeight = 1.0,
+    this.paginationController,
   }) : super(key: key);
 
   /// Column widgets displayed in the table header.
@@ -24,33 +25,8 @@ class ScrollableTableView extends StatefulWidget {
   /// The height of the row divider
   final double rowDividerHeight;
 
-  /// Combined height of the table rows plus their dividers
-  ///
-  /// We use this to enable effective vertical scrolling
-  double get contentHeight {
-    var height = 0.0;
-
-    for (var row in rows) {
-      height += row.height + rowDividerHeight;
-    }
-
-    return height;
-  }
-
-  /// Width of the tables content. Each row and the header will
-  /// have this exact width.
-  ///
-  /// We use this to ensure the width of the row dividers matches
-  /// that of the rows.
-  double get contentWidth {
-    var width = 0.0;
-
-    for (var column in columns) {
-      width += column.getWidth();
-    }
-
-    return width;
-  }
+  /// Handles pagination
+  final PaginationController? paginationController;
 
   @override
   State<ScrollableTableView> createState() => _ScrollableTableViewState();
@@ -63,24 +39,87 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
 
   final double _horizontalScrollViewPadding = 10;
 
+  List<TableViewRow> _getPaginatedRows(int? page) {
+    page ??= widget.paginationController!.currentPage;
+
+    if (page < 1) {
+      debugPrint("page cannot be less than 1, got $page");
+      return [];
+    }
+
+    if (page > widget.paginationController!.pageCount) {
+      debugPrint(
+          "page $page is out of range!!! ${widget.paginationController!.pageCount} pages available");
+      return [];
+    }
+
+    int to = page * widget.paginationController!.rowsPerPage;
+    int from = to - widget.paginationController!.rowsPerPage;
+
+    if (to > widget.rows.length) {
+      to = widget.rows.length;
+    }
+
+    return widget.rows.getRange(from, to).toList();
+  }
+
+  void _resetVerticalPosition() {
+    /// Whenever a new page is navigated to,
+    /// we set the scroll back to the top
+    _verticalScrollController1.jumpTo(0.0);
+  }
+
   void _updateVerticalPosition1() {
-    setState(() {
-      _verticalScrollController1
-          .jumpTo(_verticalScrollController2.position.pixels);
-    });
+    _verticalScrollController1
+        .jumpTo(_verticalScrollController2.position.pixels);
   }
 
   void _updateVerticalPosition2() {
-    setState(() {
-      _verticalScrollController2
-          .jumpTo(_verticalScrollController1.position.pixels);
-    });
+    _verticalScrollController2
+        .jumpTo(_verticalScrollController1.position.pixels);
+  }
+
+  /// Combined height of the table rows plus their dividers
+  ///
+  /// We use this to enable effective vertical scrolling
+  double get _contentHeight {
+    var height = 0.0;
+
+    List<TableViewRow> rows = widget.paginationController == null
+        ? widget.rows
+        : _getPaginatedRows(null);
+
+    for (var row in rows) {
+      height += row.height + widget.rowDividerHeight;
+    }
+
+    return height;
+  }
+
+  /// Width of the tables content. Each row and the header will
+  /// have this exact width.
+  ///
+  /// We use this to ensure the width of the row dividers matches
+  /// that of the rows.
+  double get _contentWidth {
+    var width = 0.0;
+
+    for (var column in widget.columns) {
+      width += column.getWidth();
+    }
+
+    return width;
   }
 
   @override
   void initState() {
     _verticalScrollController1.addListener(_updateVerticalPosition2);
     _verticalScrollController2.addListener(_updateVerticalPosition1);
+
+    if (widget.paginationController != null) {
+      widget.paginationController!.addListener(_resetVerticalPosition);
+    }
+
     super.initState();
   }
 
@@ -93,11 +132,21 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
     _verticalScrollController1.dispose();
     _verticalScrollController2.dispose();
 
+    if (widget.paginationController != null) {
+      widget.paginationController!.removeListener(_resetVerticalPosition);
+    }
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.paginationController != null &&
+        widget.paginationController!.rowCount != widget.rows.length) {
+      throw FlutterError(
+          "failed assertion: widget.paginationController!.recordCount != widget.rows.length");
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
@@ -126,7 +175,7 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                             ),
                             Container(
                               height: widget.rowDividerHeight,
-                              width: widget.contentWidth,
+                              width: _contentWidth,
                               color: Colors.black12,
                             )
                           ],
@@ -138,9 +187,19 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                             child: SingleChildScrollView(
                               scrollDirection: Axis.vertical,
                               controller: _verticalScrollController1,
-                              child: Column(
-                                children: widget.rows,
-                              ),
+                              child: widget.paginationController == null
+                                  ? Column(
+                                      children: widget.rows,
+                                    )
+                                  : ValueListenableBuilder(
+                                      valueListenable:
+                                          widget.paginationController!,
+                                      builder: (context, int page, _) {
+                                        return Column(
+                                          children: _getPaginatedRows(page),
+                                        );
+                                      },
+                                    ),
                             ),
                           ),
                         ),
@@ -174,10 +233,26 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                     child: SingleChildScrollView(
                       controller: _verticalScrollController2,
                       scrollDirection: Axis.vertical,
-                      child: SizedBox(
-                        width: 10,
-                        height: widget.contentHeight,
-                      ),
+                      child: widget.paginationController == null
+                          ? SizedBox(
+                              width: 10,
+                              height: _contentHeight,
+                            )
+                          : ValueListenableBuilder(
+
+                              /// We listen to page changes so us to update
+                              /// the content height. This is especially useful
+                              /// for the last page which may have less rows
+                              /// as compared with previous pages. This will allow
+                              /// us to appropriately update the length of the
+                              /// scrollbar thumb
+                              valueListenable: widget.paginationController!,
+                              builder: (context, value, child) {
+                                return SizedBox(
+                                  width: 10,
+                                  height: _contentHeight,
+                                );
+                              }),
                     ),
                   ),
                 ),
@@ -272,7 +347,11 @@ class TableViewRow extends StatelessWidget {
   Widget build(BuildContext context) {
     var tableView =
         context.findAncestorWidgetOfExactType<ScrollableTableView>();
-    assert(tableView != null);
+    var tableViewState =
+        context.findAncestorStateOfType<_ScrollableTableViewState>();
+
+    assert(tableView != null && tableViewState != null);
+
     var columns = tableView!.columns;
 
     return GestureDetector(
@@ -295,7 +374,7 @@ class TableViewRow extends StatelessWidget {
           ),
           Container(
             height: tableView.rowDividerHeight,
-            width: tableView.contentWidth,
+            width: tableViewState!._contentWidth,
             color: Colors.black12,
           ),
         ],
@@ -320,5 +399,41 @@ class TableViewCell extends StatelessWidget {
         child: child,
       ),
     );
+  }
+}
+
+class PaginationController extends ValueNotifier<int> {
+  PaginationController({
+    required this.rowsPerPage,
+    required this.rowCount,
+  }) : super(1);
+
+  final int rowsPerPage;
+  final int rowCount;
+
+  int get pageCount {
+    return (rowCount / rowsPerPage).ceil();
+  }
+
+  int get currentPage {
+    return value;
+  }
+
+  void next() {
+    if (value < pageCount) {
+      value++;
+    }
+  }
+
+  void previous() {
+    if (value > 1) {
+      value--;
+    }
+  }
+
+  void jumpTo(int page) {
+    if (page > 0 && page <= pageCount) {
+      value = page;
+    }
   }
 }

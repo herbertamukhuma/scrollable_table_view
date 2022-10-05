@@ -14,3 +14,7 @@
 ## 0.0.4
 
 * Common issues section
+
+## 1.0.0-beta
+
+* Implemented pagination
