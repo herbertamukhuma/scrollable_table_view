@@ -22,3 +22,7 @@
 ## 1.0.0
 
 * Implemented pagination
+
+## 1.0.1
+
+* Documentation update

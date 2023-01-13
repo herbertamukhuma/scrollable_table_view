@@ -99,4 +99,4 @@ GitHub Repo: https://github.com/herbertamukhuma/scrollable_table_view
 Raise Issues and Feature requests: https://github.com/herbertamukhuma/scrollable_table_view/issues
 
 ## Common Issues
-1. **Loading too many records**: As with any list of values/records, adding too many records to the underlying model will overwhelm you app. Remember that this table will load all the rows in your model, whether they are visible on the screen or not. This is unlike other widgets like the **ListView.builder** which only paints items when they are scrolled into view. In this regard, only load a few records at a time by implementing your own pagination. My recommendation would be **20 - 30** records in mobile apps, and up to **50** for web apps. You can do your own tests to see how many your app can handle without stuttering.
+1. **Loading too many records**: From version 1.0.0-beta, pagination has been implemented. Kindly use this to avoid loading too many records at a time, which will inturn overwhelm your app.
