@@ -4,7 +4,7 @@ Update the version in pubspec.yaml and CHANGELOG.md
 ### Format Code
 
 ```
-fluter format .
+dart format .
 ```
 
 ### Dry Run
