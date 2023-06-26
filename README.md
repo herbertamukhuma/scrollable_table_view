@@ -32,13 +32,13 @@ dependencies:
 
 ```dart
 ScrollableTableView(
-  columns: [
+  headers: [
     "product_id",
     "product_name",
     "price",
-  ].map((column) {
-    return TableViewColumn(
-      label: column,
+  ].map((label) {
+    return TableViewHeader(
+      label: label,
     );
   }).toList(),
   rows: [
@@ -71,17 +71,17 @@ Next, initialize your table and pass the pagination controller to the `paginatio
 ```dart
 ScrollableTableView(
   paginationController: paginationController,
-  columns: columns.map((column) {
-    return TableViewColumn(
-      label: column,
+  headers: labels.map((label) {
+    return TableViewHeader(
+      label: label,
     );
   }).toList(),
   rows: many_products.map((product) {
     return TableViewRow(
       height: 60,
-      cells: columns.map((column) {
+      cells: labels.map((label) {
         return TableViewCell(
-          child: Text(product[column] ?? ""),
+          child: Text(product[label] ?? ""),
         );
       }).toList(),
     );

@@ -30,3 +30,7 @@
 ## 2.0.0
 
 * Improved scrolling on mobile
+
+## 2.0.1
+
+* Updated documentation

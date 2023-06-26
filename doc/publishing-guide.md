@@ -1,4 +1,7 @@
 ### Update Version
+Update the example in readme
+
+### Update Version
 Update the version in pubspec.yaml and CHANGELOG.md
 
 ### Format Code
