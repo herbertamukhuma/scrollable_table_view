@@ -7,14 +7,15 @@ class ScrollableTableView extends StatefulWidget {
   const ScrollableTableView({
     Key? key,
     required this.rows,
-    required this.columns,
+    required this.headers,
     this.headerHeight = 40,
     this.rowDividerHeight = 1.0,
     this.paginationController,
+    this.headerBackgroundColor,
   }) : super(key: key);
 
-  /// Column widgets displayed in the table header.
-  final List<TableViewColumn> columns;
+  /// Header widgets displayed in the table header.
+  final List<TableViewHeader> headers;
 
   /// Row widgets displayed in the content area of the table.
   final List<TableViewRow> rows;
@@ -28,6 +29,8 @@ class ScrollableTableView extends StatefulWidget {
   /// Handles pagination
   final PaginationController? paginationController;
 
+  final Color? headerBackgroundColor;
+
   @override
   State<ScrollableTableView> createState() => _ScrollableTableViewState();
 }
@@ -38,6 +41,9 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
   final _verticalScrollController2 = ScrollController();
 
   final double _horizontalScrollViewPadding = 10;
+
+  bool _updatingController1 = false;
+  bool _updatingController2 = false;
 
   List<TableViewRow> _getPaginatedRows(int? page) {
     page ??= widget.paginationController!.currentPage;
@@ -70,13 +76,31 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
   }
 
   void _updateVerticalPosition1() {
+    if (_updatingController2) return;
+
+    _updatingController1 = true;
+
     _verticalScrollController1
         .jumpTo(_verticalScrollController2.position.pixels);
+
+    Future.delayed(
+      Duration.zero,
+      () => _updatingController1 = false,
+    );
   }
 
   void _updateVerticalPosition2() {
+    if (_updatingController1) return;
+
+    _updatingController2 = true;
+
     _verticalScrollController2
         .jumpTo(_verticalScrollController1.position.pixels);
+
+    Future.delayed(
+      Duration.zero,
+      () => _updatingController2 = false,
+    );
   }
 
   /// Combined height of the table rows plus their dividers
@@ -104,8 +128,8 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
   double get _contentWidth {
     var width = 0.0;
 
-    for (var column in widget.columns) {
-      width += column.getWidth();
+    for (var header in widget.headers) {
+      width += header.getWidth();
     }
 
     return width;
@@ -160,17 +184,19 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                   thumbVisibility: true,
                   child: SingleChildScrollView(
                     padding: EdgeInsets.symmetric(
-                        vertical: _horizontalScrollViewPadding),
+                      vertical: _horizontalScrollViewPadding,
+                    ),
                     controller: _horizontalScrollController,
                     scrollDirection: Axis.horizontal,
                     child: Column(
                       children: [
                         Column(
                           children: [
-                            SizedBox(
+                            Container(
+                              color: widget.headerBackgroundColor,
                               height: widget.headerHeight,
                               child: Row(
-                                children: widget.columns,
+                                children: widget.headers,
                               ),
                             ),
                             Container(
@@ -209,7 +235,7 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                 ),
               ),
               Container(
-                width: 10,
+                width: 1,
                 height: double.infinity,
 
                 /// Padding will allow for [_verticalScrollController1] and [_verticalScrollController2]
@@ -265,29 +291,24 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
   }
 }
 
-class TableViewColumn extends StatelessWidget {
-  const TableViewColumn({
+class TableViewHeader extends StatelessWidget {
+  const TableViewHeader({
     Key? key,
     this.width,
-    this.height,
     required this.label,
     this.labelFontSize = 14,
     this.minWidth = 80,
+    this.textStyle,
+    this.alignment = Alignment.center,
+    this.padding,
   }) : super(key: key);
 
-  /// The width of the column.
+  /// The width of the header.
   /// If the [width] is not provided, a width is calculated
-  /// based on the contents of the column. If the calculated
+  /// based on the contents of the header. If the calculated
   /// width is less than the [minWidth], then the [minWidth]
   /// is applied
   final double? width;
-
-  /// Column height.
-  ///
-  /// Kindly note that the table header also has a height, which
-  /// means that this height will not have a visual effect outside
-  /// of the table header
-  final double? height;
 
   /// A string to act as the label for the column
   final String label;
@@ -299,6 +320,12 @@ class TableViewColumn extends StatelessWidget {
   /// or calculated width is less.
   final double minWidth;
 
+  final TextStyle? textStyle;
+
+  final AlignmentGeometry alignment;
+
+  final EdgeInsetsGeometry? padding;
+
   // Returns the effective width of the column
   double getWidth() {
     return width ?? max((0.7 * labelFontSize) * label.length, minWidth);
@@ -306,18 +333,18 @@ class TableViewColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      padding: padding,
       width: getWidth(),
-      height: height,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style:
-                TextStyle(fontSize: labelFontSize, fontWeight: FontWeight.bold),
-          ),
-        ],
+      child: Align(
+        alignment: alignment,
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ).merge(textStyle),
+        ),
       ),
     );
   }
@@ -329,6 +356,7 @@ class TableViewRow extends StatelessWidget {
     required this.cells,
     this.height = 40,
     this.onTap,
+    this.backgroundColor,
   }) : super(key: key);
 
   /// Cells within the row.
@@ -339,6 +367,8 @@ class TableViewRow extends StatelessWidget {
 
   /// Row height
   final double height;
+
+  final Color? backgroundColor;
 
   /// Will be called any time a user taps a row
   final void Function()? onTap;
@@ -352,13 +382,14 @@ class TableViewRow extends StatelessWidget {
 
     assert(tableView != null && tableViewState != null);
 
-    var columns = tableView!.columns;
+    var headers = tableView!.headers;
 
     return GestureDetector(
       onTap: onTap,
       child: Column(
         children: [
-          SizedBox(
+          Container(
+            color: backgroundColor,
             height: height,
             child: Row(
               children: Utils.map(cells, (index, cell) {
@@ -366,7 +397,7 @@ class TableViewRow extends StatelessWidget {
                 /// Its width ensures that all cells in a column have the
                 /// same width as the respective [TableViewColumn]
                 return SizedBox(
-                  width: columns[index].getWidth(),
+                  width: headers[index].getWidth(),
                   child: cell,
                 );
               }),
@@ -387,15 +418,23 @@ class TableViewCell extends StatelessWidget {
   const TableViewCell({
     Key? key,
     this.child,
+    this.alignment = Alignment.center,
+    this.padding = EdgeInsets.zero,
   }) : super(key: key);
 
   /// Child of the cell
   final Widget? child;
 
+  final EdgeInsetsGeometry padding;
+
+  final AlignmentGeometry alignment;
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Center(
+    return Padding(
+      padding: padding,
+      child: Align(
+        alignment: alignment,
         child: child,
       ),
     );

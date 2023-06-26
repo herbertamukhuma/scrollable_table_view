@@ -26,3 +26,7 @@
 ## 1.0.1
 
 * Documentation update
+
+## 2.0.0
+
+* Improved scrolling on mobile
