@@ -34,3 +34,7 @@
 ## 2.0.1
 
 * Updated documentation
+
+## 2.0.2
+
+* onTap bug fix on TableViewRow
