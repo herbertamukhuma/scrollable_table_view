@@ -235,7 +235,7 @@ class _ScrollableTableViewState extends State<ScrollableTableView> {
                 ),
               ),
               Container(
-                width: 1,
+                width: 10,
                 height: double.infinity,
 
                 /// Padding will allow for [_verticalScrollController1] and [_verticalScrollController2]
@@ -301,6 +301,7 @@ class TableViewHeader extends StatelessWidget {
     this.textStyle,
     this.alignment = Alignment.center,
     this.padding,
+    this.builder,
   }) : super(key: key);
 
   /// The width of the header.
@@ -326,6 +327,8 @@ class TableViewHeader extends StatelessWidget {
 
   final EdgeInsetsGeometry? padding;
 
+  final Widget Function(BuildContext context)? builder;
+
   // Returns the effective width of the column
   double getWidth() {
     return width ?? max((0.7 * labelFontSize) * label.length, minWidth);
@@ -333,6 +336,8 @@ class TableViewHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (builder != null) return builder!(context);
+    
     return Container(
       padding: padding,
       width: getWidth(),
