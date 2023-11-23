@@ -1,19 +1,24 @@
-## 0.0.1
+## 2.0.3
 
-* A multi axis scrollable table, that allows you to scroll on both the vertical and horizontal axis
+* Documentation update
 
-## 0.0.2
+## 2.0.2
 
-* Updated comments and example
+* onTap bug fix on TableViewRow
 
-## 0.0.3
+## 2.0.1
 
-* Updated comments
-* onTap event on the rows
+* Updated documentation
 
-## 0.0.4
+## 2.0.0
 
-* Common issues section
+* Improved scrolling on mobile
+
+* Implemented pagination
+
+## 1.0.1
+
+* Documentation update
 
 ## 1.0.0-beta
 
@@ -23,18 +28,27 @@
 
 * Implemented pagination
 
-## 1.0.1
+## 0.0.4
 
-* Documentation update
+* Common issues section
 
-## 2.0.0
+## 0.0.3
 
-* Improved scrolling on mobile
+* Updated comments
+* onTap event on the rows
 
-## 2.0.1
+## 0.0.2
 
-* Updated documentation
+* Updated comments and example
 
-## 2.0.2
+## 0.0.1
 
-* onTap bug fix on TableViewRow
+* A multi axis scrollable table, that allows you to scroll on both the vertical and horizontal axis
+
+
+
+
+
+
+
+
