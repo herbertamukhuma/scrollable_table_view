@@ -19,6 +19,9 @@ This is a multi axis scrollable data table, that allows you to scroll on both th
 
 This widget serves the same purpose as a DataTable, with the advantage that it can scroll in both the horizontal and vertical axis, while maintaining the vertical position of the header.
 
+### Note
+For more complex features like freezing columns and rows, kindly take a look at the [data_table_2](https://pub.dev/packages/data_table_2) package
+
 ## Getting started
 
 Simply add into your dependencies the following line.
